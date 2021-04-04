@@ -2,3 +2,4 @@ rootProject.name = 'kalkulator'
 
 include ':expression-parser'
 include ':kalkulator-core'
+include ':kalkulator-cli'
