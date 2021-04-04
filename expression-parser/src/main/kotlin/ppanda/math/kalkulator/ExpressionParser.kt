@@ -50,7 +50,7 @@ open class ParsingContext(
 
         val unaryOp = parser.operators.getUnaryOp(token)
         if (unaryOp != null) {
-            return UnaryExpression(unaryOp, expr(), token)
+            return UnaryExpression(unaryOp, unaryOrLitOrParen(), token)
         }
 
         if (token.type == DECIMAL_LITERAL) {

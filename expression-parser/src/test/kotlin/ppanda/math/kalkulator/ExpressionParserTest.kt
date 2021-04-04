@@ -79,6 +79,15 @@ class ExpressionParserTest : AnnotationSpec() {
     }
 
     @Test
+    fun `should parse combination of unary and binary expression`() {
+        parser.parse(" - 5 + 12") shouldBe BinaryExpression(
+            ADDITION,
+            UnaryExpression(UNARY_MINUS, 5.0.asLit),
+            12.0.asLit,
+        )
+    }
+
+    @Test
     fun `should parse expressions without spaces`() {
         parser.parse("(5)") shouldBe ParenthesizedExpression(5.0.asLit)
 

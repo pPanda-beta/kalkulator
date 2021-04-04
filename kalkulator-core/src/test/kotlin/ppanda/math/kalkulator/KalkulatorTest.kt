@@ -22,8 +22,9 @@ class KalkulatorTest : ExpectSpec({
             "Parenthesis with binary expressions" to Case("52 / (7 + 6)  + 3", 7.0),
             "Unnecessary parenthesis " to Case("52 / (7 + ((6)) )  + 3", 7.0),
             "Multiple unary expressions" to Case("2 + - - - 5", -3.0),
+            "Mixed expressions" to Case("24 / 2 * 3 + -(1/5) + ( 7 * (4 - (-2)))", 77.8),
 
-        ) { (expr, result) ->
+            ) { (expr, result) ->
             kalkulator.parseAndEvaluate(expr) shouldBeExactly result
         }
     }
