@@ -22,7 +22,7 @@ class ExpressionParser(
     fun parse(s: String): Expression {
         val lexemes: List<Lex> = lexer.extract(s)
         val tokens = tokenizer.mapToTokens(lexemes)
-        return ParsingContext(this, tokens.iterator()).expr()
+        return ParsingContext(this, tokens.listIterator()).expr()
     }
 }
 
@@ -34,15 +34,20 @@ TODO: switch to a parser generator like antlr4
  */
 class ParsingContext(
     val parser: ExpressionParser,
-    val iterator: Iterator<Token>
+    val iterator: ListIterator<Token>
 ) {
     private val operatorPrecedenceRearranger = OperatorPrecedenceRearranger(parser.operatorPrecedence)
 
+
+    fun hasNext() = iterator.hasNext()
+    fun next() = iterator.next()
+    fun peekNext() = iterator.next().also { iterator.previous() }
+
     fun unaryOrLitOrParen(): Expression {
-        if (!iterator.hasNext()) {
+        if (!hasNext()) {
             throw NoMoreTokenException(expectation = "unary operator or literal")
         }
-        val token = iterator.next()
+        val token = next()
 
         val unaryOp = parser.operators.getUnaryOp(token)
         if (unaryOp != null) {
@@ -59,8 +64,8 @@ class ParsingContext(
     fun expr(): Expression {
         val firstOperand = unaryOrLitOrParen()
         val nodes = mutableListOf<Any>(firstOperand)
-        while (iterator.hasNext()) {
-            val token = iterator.next()
+        while (hasNext()) {
+            val token = next()
             val binaryOp = parser.operators.getBinaryOp(token)
                 ?: throw UnknownTokenException(token, expectation = "binary operator")
             val nextOperand = unaryOrLitOrParen()
