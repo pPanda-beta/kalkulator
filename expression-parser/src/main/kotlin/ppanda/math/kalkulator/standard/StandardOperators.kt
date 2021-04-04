@@ -1,9 +1,9 @@
 package ppanda.math.kalkulator.standard
 
 import ppanda.math.kalkulator.*
-import ppanda.math.kalkulator.standard.Precedence.ADD_SUB_PRECEDENCE
-import ppanda.math.kalkulator.standard.Precedence.MULT_DIV_PRECEDENCE
-import ppanda.math.kalkulator.standard.Precedence.UNARY_PRECEDENCE
+import ppanda.math.kalkulator.standard.StandardPrecedence.ADD_SUB_PRECEDENCE
+import ppanda.math.kalkulator.standard.StandardPrecedence.MULT_DIV_PRECEDENCE
+import ppanda.math.kalkulator.standard.StandardPrecedence.UNARY_PRECEDENCE
 
 
 object StandardTokenTypes {
@@ -13,7 +13,7 @@ object StandardTokenTypes {
     val DIVIDE = PatternBasedTokenType.fromString("DIVIDE", "/")
 }
 
-internal object Precedence {
+object StandardPrecedence {
     const val UNARY_PRECEDENCE = 1
     const val ORDER_PRECEDENCE = 2
     const val MULT_DIV_PRECEDENCE = 3
