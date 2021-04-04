@@ -8,6 +8,7 @@ import ppanda.math.kalkulator.exceptions.UnknownTokenException
 import ppanda.math.kalkulator.standard.StandardOperators.ADDITION
 import ppanda.math.kalkulator.standard.StandardOperators.DIVISION
 import ppanda.math.kalkulator.standard.StandardOperators.MULTIPLICATION
+import ppanda.math.kalkulator.standard.StandardOperators.SUBTRACTION
 import ppanda.math.kalkulator.standard.StandardOperators.UNARY_MINUS
 import ppanda.math.kalkulator.tree.BinaryExpression
 import ppanda.math.kalkulator.tree.Literal
@@ -59,6 +60,21 @@ class ExpressionParserTest : AnnotationSpec() {
             MULTIPLICATION,
             ParenthesizedExpression(BinaryExpression(ADDITION, 2.0.asLit, 3.0.asLit)),
             7.0.asLit
+        )
+    }
+
+    @Test
+    fun `should parse nested parenthesized expression`() {
+        parser.parse("7 * (4 - (-2))") shouldBe BinaryExpression(
+            MULTIPLICATION,
+            7.0.asLit,
+            ParenthesizedExpression(
+                BinaryExpression(
+                    SUBTRACTION,
+                    4.0.asLit,
+                    ParenthesizedExpression(UnaryExpression(UNARY_MINUS, 2.0.asLit))
+                )
+            )
         )
     }
 

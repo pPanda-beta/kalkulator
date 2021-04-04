@@ -59,7 +59,7 @@ open class ParsingContext(
 
         if (token.type == OPEN_PARENTHESIS) {
             return ParenthesizedExpression(
-                child = boundTill(CLOSE_PARENTHESIS).expr(),
+                child = boundTill(CLOSE_PARENTHESIS).exprAndClose(),
                 beginningToken = token
             )
         }
@@ -91,7 +91,7 @@ class BoundedParserContext(
 
     override fun hasNext() = super.hasNext() && peekNext().type != terminatingSymbol
 
-    override fun expr() = super.expr().also { next() }
+    fun exprAndClose() = expr().also { next() }
 }
 
 
