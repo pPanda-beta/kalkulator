@@ -1,14 +1,13 @@
 package ppanda.math.kalkulator
 
+import ppanda.math.kalkulator.BasicTokenTypes.CLOSE_PARENTHESIS
 import ppanda.math.kalkulator.BasicTokenTypes.DECIMAL_LITERAL
+import ppanda.math.kalkulator.BasicTokenTypes.OPEN_PARENTHESIS
 import ppanda.math.kalkulator.exceptions.ExtraTokenException
 import ppanda.math.kalkulator.exceptions.NoMoreTokenException
 import ppanda.math.kalkulator.exceptions.UnknownTokenException
 import ppanda.math.kalkulator.standard.StandardOperators
-import ppanda.math.kalkulator.tree.BinaryExpression
-import ppanda.math.kalkulator.tree.Expression
-import ppanda.math.kalkulator.tree.Literal
-import ppanda.math.kalkulator.tree.UnaryExpression
+import ppanda.math.kalkulator.tree.*
 import java.util.*
 
 
@@ -32,18 +31,20 @@ Hand cranked parsers are never good.
 TODO: switch to a parser generator like antlr4
 
  */
-class ParsingContext(
+open class ParsingContext(
     val parser: ExpressionParser,
     val iterator: ListIterator<Token>
 ) {
     private val operatorPrecedenceRearranger = OperatorPrecedenceRearranger(parser.operatorPrecedence)
 
 
-    fun hasNext() = iterator.hasNext()
-    fun next() = iterator.next()
-    fun peekNext() = iterator.next().also { iterator.previous() }
+    open fun hasNext() = iterator.hasNext()
+    open fun next() = iterator.next()
+    open fun peekNext() = iterator.next().also { iterator.previous() }
 
-    fun unaryOrLitOrParen(): Expression {
+    open fun boundTill(terminatingSymbol: TokenType) = BoundedParserContext(parser, iterator, terminatingSymbol)
+
+    open fun unaryOrLitOrParen(): Expression {
         if (!hasNext()) {
             throw NoMoreTokenException(expectation = "unary operator or literal")
         }
@@ -58,10 +59,17 @@ class ParsingContext(
             return Literal(token)
         }
 
+        if (token.type == OPEN_PARENTHESIS) {
+            return ParenthesizedExpression(
+                child = boundTill(CLOSE_PARENTHESIS).expr(),
+                beginningToken = token
+            )
+        }
+
         throw UnknownTokenException(token, expectation = "unary operator or literal")
     }
 
-    fun expr(): Expression {
+    open fun expr(): Expression {
         val firstOperand = unaryOrLitOrParen()
         val nodes = mutableListOf<Any>(firstOperand)
         while (hasNext()) {
@@ -78,6 +86,16 @@ class ParsingContext(
     }
 
 }
+
+class BoundedParserContext(
+    parser: ExpressionParser, iterator: ListIterator<Token>, val terminatingSymbol: TokenType
+) : ParsingContext(parser, iterator) {
+
+    override fun hasNext() = super.hasNext() && peekNext().type != terminatingSymbol
+
+    override fun expr() = super.expr().also { next() }
+}
+
 
 /*
 This is a modified version of

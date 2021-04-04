@@ -17,7 +17,10 @@ open class Node(val token: Token?) : WithEqualsAndHashCode {
 open class Expression(token: Token?) : Node(token) {
 }
 
-class ParenthesizedExpression(token: Token?) : Expression(token) {
+class ParenthesizedExpression(val child: Expression, beginningToken: Token? = null) : Expression(beginningToken) {
+    override fun toString(): String = " ( $child ) "
+
+    override fun propsForEquality(): Array<Any?> = arrayOf(child)
 }
 
 

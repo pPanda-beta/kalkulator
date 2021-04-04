@@ -11,6 +11,7 @@ import ppanda.math.kalkulator.standard.StandardOperators.MULTIPLICATION
 import ppanda.math.kalkulator.standard.StandardOperators.UNARY_MINUS
 import ppanda.math.kalkulator.tree.BinaryExpression
 import ppanda.math.kalkulator.tree.Literal
+import ppanda.math.kalkulator.tree.ParenthesizedExpression
 import ppanda.math.kalkulator.tree.UnaryExpression
 
 
@@ -48,6 +49,17 @@ class ExpressionParserTest : AnnotationSpec() {
         val _12by3x2plus2 = BinaryExpression(ADDITION, 2.0.asLit, _12by3x2)
 
         tree shouldBe _12by3x2plus2
+    }
+
+    @Test
+    fun `should parse parenthesized expression`() {
+        parser.parse(" ( 5 ) ") shouldBe ParenthesizedExpression(5.0.asLit)
+
+        parser.parse(" ( 2 + 3 ) * 7 ") shouldBe BinaryExpression(
+            MULTIPLICATION,
+            ParenthesizedExpression(BinaryExpression(ADDITION, 2.0.asLit, 3.0.asLit)),
+            7.0.asLit
+        )
     }
 }
 
