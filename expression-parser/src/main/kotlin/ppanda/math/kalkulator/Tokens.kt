@@ -1,14 +1,17 @@
 package ppanda.math.kalkulator
 
-import ppanda.math.kalkulator.exceptions.UnrecognizedLexException
 
+data class Result(val value: String, val range: IntRange, val source: String? = null)
 
 interface TokenType {
-    fun matches(lex: Lex): Boolean
+    fun consume(s: String, startingPos: Int = 0): Result?
 }
 
 data class PatternBasedTokenType(val name: String, val pattern: Regex) : TokenType {
-    override fun matches(lex: Lex) = pattern.matches(lex.value)
+    override fun consume(s: String, startingPos: Int) = pattern
+        .find(s, startingPos)
+        ?.let { Result(it.value, it.range, s) }
+
     override fun toString() = name
 
     companion object {
@@ -26,22 +29,19 @@ object BasicTokenTypes {
 }
 
 //TODO: equality and hashcode checking should ignore location may be :P
-data class Token(val type: TokenType, val value: String, var location: SourceLocation) {
+// This is just another representation of Lexeme, may be omitted in future
+data class Token(val type: TokenType, val value: String, val location: SourceLocation?) {
     override fun toString(): String = """$type($value at $location)"""
 }
 
-class Tokenizer(tokenTypes: Collection<TokenType>) {
-    private val allTokenTypes = BasicTokenTypes.all + tokenTypes
+class Tokenizer(
+    tokenTypes: Collection<TokenType>,
+    externalLexer: Lexer? = null
+) {
+    val allTokenTypes = BasicTokenTypes.all + tokenTypes
+    val lexer = externalLexer ?: Lexer(this)
 
-    fun mapToTokens(lexemes: List<Lex>) = lexemes.map {
-        Token(
-            type = determineTokenType(it),
-            value = it.value,
-            location = it.location
-        )
-    }
-
-    private fun determineTokenType(lex: Lex) = allTokenTypes.firstOrNull { type -> type.matches(lex) }
-        ?: throw UnrecognizedLexException(lex)
+    fun extractTokens(s: String): List<Token> = lexer.extract(s)
+        .map { Token(type = it.tokenType, value = it.value, location = it.location) }
 }
 

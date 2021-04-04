@@ -14,13 +14,11 @@ import java.util.*
 class ExpressionParser(
     val operators: Operators = StandardOperators,
     val operatorPrecedence: OperatorPrecedence = StandardOperators.precedence(),
-    val lexer: Lexer = Lexer(),
     val tokenizer: Tokenizer = Tokenizer(operators.tokenTypes())
 ) {
 
     fun parse(s: String): Expression {
-        val lexemes: List<Lex> = lexer.extract(s)
-        val tokens = tokenizer.mapToTokens(lexemes)
+        val tokens = tokenizer.extractTokens(s)
         return ParsingContext(this, tokens.listIterator()).expr()
     }
 }

@@ -61,6 +61,17 @@ class ExpressionParserTest : AnnotationSpec() {
             7.0.asLit
         )
     }
+
+    @Test
+    fun `should parse expressions without spaces`() {
+        parser.parse("(5)") shouldBe ParenthesizedExpression(5.0.asLit)
+
+        parser.parse("(2+3)*7") shouldBe BinaryExpression(
+            MULTIPLICATION,
+            ParenthesizedExpression(BinaryExpression(ADDITION, 2.0.asLit, 3.0.asLit)),
+            7.0.asLit
+        )
+    }
 }
 
 val Double.asLit: Literal

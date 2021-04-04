@@ -1,5 +1,6 @@
 package ppanda.math.kalkulator.exceptions
 
-import ppanda.math.kalkulator.Lex
+import ppanda.math.kalkulator.SourceLocation
 
-class UnrecognizedLexException(val lex: Lex) : Exception(""" Can not understand ${lex.value} at ${lex.location} """)
+class UnrecognizedSourceException(sourceChunk: String, location: SourceLocation) :
+    Exception(""" Can not understand '$sourceChunk' at $location """)
