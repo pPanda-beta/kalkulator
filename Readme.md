@@ -1,5 +1,11 @@
 ## A kotlin based extensible calculator
 
+### Mentions
+
+* The execution mechanism is highly influenced by my work [presto-utils](https://github.com/pPanda-beta/presto-utils)
+* The visitor pattern is inspired by [trino-parser](https://github1s.com/trinodb/trino/blob/HEAD/core/trino-parser/src/main/java/io/trino/sql/tree/AstVisitor.java)  
+* Some part of it uses [Shunting-yard algorithm](https://en.wikipedia.org/wiki/Shunting-yard_algorithm#A_simple_conversion)
+
 ### For users
 #### How to run ?
 
