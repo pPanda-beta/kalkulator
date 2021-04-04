@@ -18,6 +18,7 @@ object StandardOperatorModules : OperatorModules(
         newModule(UNARY_PLUS, UNARY_PRECEDENCE) { it },
         newModule(UNARY_MINUS, UNARY_PRECEDENCE) { -it }
     ),
+    // BODMAS by https://www.mathsisfun.com/operation-order-bodmas.html
     binaryModules = listOf(
         newModule(ADDITION, ADD_SUB_PRECEDENCE, Double::plus),
         newModule(SUBTRACTION, ADD_SUB_PRECEDENCE, Double::minus),
